@@ -58,3 +58,5 @@ pub mod math;
 pub use vector::Vector;
 pub use option::Option;
 pub use object::{ObjectRef, Owner, ObjectMetadata};
+pub use string::String;
+pub use math::*;
