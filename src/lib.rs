@@ -55,8 +55,8 @@ pub mod string;
 /// - Random number generation
 pub mod math;
 
-pub use vector::Vector;
-pub use option::Option;
-pub use object::{ObjectRef, Owner, ObjectMetadata};
-pub use string::String;
 pub use math::*;
+pub use object::{ObjectMetadata, ObjectRef, Owner};
+pub use option::Option;
+pub use string::String;
+pub use vector::Vector;

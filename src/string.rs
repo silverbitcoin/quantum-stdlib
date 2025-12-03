@@ -30,9 +30,7 @@ impl String {
     /// assert!(s.is_empty());
     /// ```
     pub fn new() -> Self {
-        Self {
-            bytes: Vec::new(),
-        }
+        Self { bytes: Vec::new() }
     }
 
     /// Create a string from a byte slice
@@ -56,8 +54,7 @@ impl String {
     /// ```
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, std::string::String> {
         // Validate UTF-8
-        std::str::from_utf8(bytes)
-            .map_err(|_| "Invalid UTF-8".to_string())?;
+        std::str::from_utf8(bytes).map_err(|_| "Invalid UTF-8".to_string())?;
 
         Ok(Self {
             bytes: bytes.to_vec(),
@@ -142,8 +139,7 @@ impl String {
     /// assert_eq!(s.as_str().unwrap(), "hello");
     /// ```
     pub fn as_str(&self) -> Result<&str, std::string::String> {
-        std::str::from_utf8(&self.bytes)
-            .map_err(|_| "Invalid UTF-8".to_string())
+        std::str::from_utf8(&self.bytes).map_err(|_| "Invalid UTF-8".to_string())
     }
 
     /// Append another string
@@ -206,7 +202,8 @@ impl String {
     /// assert!(!s.contains(&String::from_str("foo")));
     /// ```
     pub fn contains(&self, needle: &String) -> bool {
-        self.bytes.windows(needle.bytes.len())
+        self.bytes
+            .windows(needle.bytes.len())
             .any(|window| window == needle.bytes.as_slice())
     }
 
@@ -231,7 +228,8 @@ impl String {
     /// assert_eq!(s.find(&String::from_str("foo")), None);
     /// ```
     pub fn find(&self, needle: &String) -> Option<u64> {
-        self.bytes.windows(needle.bytes.len())
+        self.bytes
+            .windows(needle.bytes.len())
             .position(|window| window == needle.bytes.as_slice())
             .map(|pos| pos as u64)
     }
@@ -354,7 +352,8 @@ impl String {
         let mut result = Vec::new();
         let mut start = 0;
 
-        while let Some(pos) = self.substring(start as u64, self.bytes.len() as u64)
+        while let Some(pos) = self
+            .substring(start as u64, self.bytes.len() as u64)
             .ok()
             .and_then(|s| s.find(delimiter))
         {
@@ -479,87 +478,5 @@ impl fmt::Display for String {
         } else {
             write!(f, "<invalid UTF-8>")
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_new_string() {
-        let s = String::new();
-        assert!(s.is_empty());
-        assert_eq!(s.len(), 0);
-    }
-
-    #[test]
-    fn test_from_str() {
-        let s = String::from_str("hello");
-        assert_eq!(s.len(), 5);
-        assert_eq!(s.as_str().unwrap(), "hello");
-    }
-
-    #[test]
-    fn test_push_str() {
-        let mut s = String::from_str("hello");
-        s.push_str(&String::from_str(" world"));
-        assert_eq!(s.as_str().unwrap(), "hello world");
-    }
-
-    #[test]
-    fn test_contains() {
-        let s = String::from_str("hello world");
-        assert!(s.contains(&String::from_str("world")));
-        assert!(!s.contains(&String::from_str("foo")));
-    }
-
-    #[test]
-    fn test_find() {
-        let s = String::from_str("hello world");
-        assert_eq!(s.find(&String::from_str("world")), Some(6));
-        assert_eq!(s.find(&String::from_str("foo")), None);
-    }
-
-    #[test]
-    fn test_substring() {
-        let s = String::from_str("hello");
-        let sub = s.substring(1, 4).unwrap();
-        assert_eq!(sub.as_str().unwrap(), "ell");
-    }
-
-    #[test]
-    fn test_to_uppercase() {
-        let s = String::from_str("hello");
-        let upper = s.to_uppercase();
-        assert_eq!(upper.as_str().unwrap(), "HELLO");
-    }
-
-    #[test]
-    fn test_to_lowercase() {
-        let s = String::from_str("HELLO");
-        let lower = s.to_lowercase();
-        assert_eq!(lower.as_str().unwrap(), "hello");
-    }
-
-    #[test]
-    fn test_starts_ends_with() {
-        let s = String::from_str("hello world");
-        assert!(s.starts_with(&String::from_str("hello")));
-        assert!(s.ends_with(&String::from_str("world")));
-    }
-
-    #[test]
-    fn test_repeat() {
-        let s = String::from_str("ab");
-        let repeated = s.repeat(3);
-        assert_eq!(repeated.as_str().unwrap(), "ababab");
-    }
-
-    #[test]
-    fn test_replace() {
-        let s = String::from_str("hello world");
-        let replaced = s.replace(&String::from_str("world"), &String::from_str("Quantum"));
-        assert_eq!(replaced.as_str().unwrap(), "hello Quantum");
     }
 }

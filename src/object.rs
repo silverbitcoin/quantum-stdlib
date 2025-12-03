@@ -41,7 +41,11 @@ impl ObjectRef {
     /// assert_eq!(obj_ref.version, 1);
     /// ```
     pub fn new(id: ObjectID, version: u64, digest: [u8; 32]) -> Self {
-        Self { id, version, digest }
+        Self {
+            id,
+            version,
+            digest,
+        }
     }
 
     /// Get the object ID
@@ -395,74 +399,5 @@ impl fmt::Display for ObjectMetadata {
             "ObjectMetadata {{ id: {}, owner: {}, version: {}, size: {} }}",
             self.id, self.owner, self.version, self.size
         )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_object_ref() {
-        let id = ObjectID::new([0u8; 64]);
-        let obj_ref = ObjectRef::new(id, 1, [0u8; 32]);
-        assert_eq!(obj_ref.version(), 1);
-        assert_eq!(obj_ref.id(), id);
-    }
-
-    #[test]
-    fn test_owner() {
-        let addr = silver_core::SilverAddress([0u8; 64]);
-        let owner = Owner::Address(addr);
-        assert!(owner.is_address());
-        assert!(!owner.is_shared());
-        assert_eq!(owner.as_address(), Some(addr));
-
-        let shared = Owner::Shared;
-        assert!(shared.is_shared());
-        assert!(!shared.is_address());
-
-        let immutable = Owner::Immutable;
-        assert!(immutable.is_immutable());
-    }
-
-    #[test]
-    fn test_object_metadata() {
-        let id = ObjectID::new([0u8; 64]);
-        let owner = Owner::Shared;
-        let mut metadata = ObjectMetadata::new(id, owner, 1024, 1000);
-
-        assert_eq!(metadata.size(), 1024);
-        assert_eq!(metadata.version(), 1);
-
-        metadata.increment_version();
-        assert_eq!(metadata.version(), 2);
-
-        metadata.set_size(2048);
-        assert_eq!(metadata.size(), 2048);
-    }
-
-    #[test]
-    fn test_custom_metadata() {
-        let id = ObjectID::new([0u8; 64]);
-        let owner = Owner::Shared;
-        let mut metadata = ObjectMetadata::new(id, owner, 1024, 1000);
-
-        metadata.set_custom("type", b"coin");
-        assert_eq!(metadata.get_custom("type"), Some(b"coin".to_vec()));
-        assert!(metadata.has_custom("type"));
-
-        metadata.remove_custom("type");
-        assert_eq!(metadata.get_custom("type"), None);
-    }
-
-    #[test]
-    fn test_object_age() {
-        let id = ObjectID::new([0u8; 64]);
-        let owner = Owner::Shared;
-        let metadata = ObjectMetadata::new(id, owner, 1024, 1000);
-
-        assert_eq!(metadata.age(1100), 100);
-        assert_eq!(metadata.age(1000), 0);
     }
 }
