@@ -1,0 +1,22 @@
+[package]
+name = "quantum-stdlib"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Standard library for Quantum smart contract language"
+
+[dependencies]
+# Core
+silver-core = { path = "../../crates/silver-core" }
+quantum-vm = { path = "../quantum-vm" }
+
+# Workspace dependencies
+serde = { workspace = true }
+thiserror = { workspace = true }
+blake3 = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
